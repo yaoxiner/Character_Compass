@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#10233f">
+  <title>Character Compass · 长篇小说创作室</title>
+  <meta name="description" content="从第一章到人物弧线、长篇章节管理与长期记忆的本地创作工具。">
+  <link rel="icon" type="image/svg+xml" href="/assets/icon.svg">
+  <link rel="stylesheet" href="/style.css">
+  <script src="/app.js" defer></script>
+</head>
+<body>
+  <div class="shell">
+    <aside class="sidebar">
+      <div class="brand"><img class="brand-mark" src="/assets/icon.svg" alt=""><div><strong>Character<br>Compass</strong><span>长篇小说创作室</span></div></div>
+      <div class="sidebar-heading">我的小说 <button id="new-novel" class="small-icon" title="新建小说" aria-label="新建小说"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button></div>
+      <div id="novel-list" class="novel-list"></div>
+      <div class="sidebar-bottom">
+        <button id="open-pet" class="sidebar-link pet-open">显示桌面同伴 ↗</button>
+        <div class="balance-row"><span>DeepSeek 余额</span><button id="refresh-balance" title="刷新余额">刷新 ↻</button></div>
+        <p id="balance-status" aria-live="polite">点击刷新查看</p>
+        <div class="section-label">今日用量 <span id="budget-label">—</span></div>
+        <div class="budget-bar"><div id="budget-fill"></div></div>
+        <p id="key-status">正在检查 DeepSeek 配置…</p>
+        <button id="configure-key" class="sidebar-link">设置 DeepSeek Key ↗</button>
+        <button id="show-usage" class="sidebar-link">调用记录与成本 ↗</button>
+        <button id="export-novel" class="sidebar-link">导出小说备份 ↓</button>
+        <button id="import-novel" class="sidebar-link">导入小说备份 ↑</button>
+        <input id="import-file" type="file" accept="application/json,.json" hidden>
+      </div>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <div><span class="eyebrow">WRITING DESK / 写作台</span><h1 id="project-title">开始你的故事</h1></div>
+        <div class="top-actions"><span id="saved-indicator" aria-live="polite"></span><button id="save-all" class="button subtle">保存设定</button></div>
+      </header>
+
+      <div id="empty-state" class="empty-state" hidden>
+        <img class="empty-symbol" src="/assets/icon.svg" alt=""><span class="eyebrow">A STORY BEGINS HERE</span>
+        <h2>先写下这本小说的名字</h2><p>创建后直接进入第一章。章节正文是唯一的小说正文。</p>
+        <button id="empty-create" class="button primary">创建第一部小说</button>
+      </div>
+
+      <div id="workspace" hidden>
+        <div class="tabs" role="tablist" aria-label="工作区域">
+          <button class="tab active" data-tab="foundation" role="tab" aria-selected="true">01 · 故事设定</button>
+          <button class="tab" data-tab="characters" role="tab" aria-selected="false">02 · 人物与技能</button>
+          <button class="tab" data-tab="chapters" role="tab" aria-selected="false">03 · 章节管理</button>
+          <button class="tab" data-tab="memories" role="tab" aria-selected="false">04 · 章节记忆</button>
+        </div>
+
+        <section id="foundation" class="tab-panel active" role="tabpanel">
+          <div class="page-intro"><div><span class="eyebrow">01 / THE FOUNDATION</span><h2>故事从这里生长</h2><p>在这里整理设定；小说正文从“第一章”开始写。</p></div><div class="step-count">01 <span>/ 04</span></div></div>
+          <div class="two-col balanced">
+            <div class="card"><span class="eyebrow">STORY SEED</span><h3>故事设想</h3><label class="story-title-label">小说标题<input id="novel-title" maxlength="150" placeholder="小说标题"></label><textarea id="premise" class="short-textarea" placeholder="一句话核心设想、类型、主题或你想探索的关系。"></textarea></div>
+            <div class="card"><span class="eyebrow">AUTHOR NOTES</span><h3>粗略大纲</h3><p class="hint">仅供作者自己查看与整理思路，不发送给 AI，也不作为生成或推演的约束。</p><textarea id="outline" class="medium-textarea" placeholder="记下关键事件、结局方向或人物会面场景。这些内容仅作作者备忘。"></textarea></div>
+          </div>
+          <div class="card foundation-action"><span class="eyebrow">WORLD BUILDING</span><h3>世界观设定</h3><p class="hint">作为 AI 场景生成和人物发展推演的约束。记录时代、地理、势力、力量体系、能力代价，以及不可违背的规则；填写后点击“保存设定”。</p><textarea id="worldbuilding" class="medium-textarea" maxlength="50000" placeholder="时代与背景：&#10;地理与势力：&#10;力量体系与能力边界：&#10;使用能力的代价：&#10;不可违背的规则与禁忌："></textarea></div>
+          <div class="action-card foundation-action"><div class="action-icon">↗</div><div><strong>从第一章提取人物与技能</strong><p>Flash · 长章节按固定片段读取 · 只记录有原文依据的能力</p></div><button id="analyze" class="button primary">分析第一章</button></div>
+        </section>
+
+        <section id="characters" class="tab-panel" role="tabpanel">
+          <div class="page-intro"><div><span class="eyebrow">02 / CHARACTER MEMORY</span><h2>让性格推动情节</h2><p>从第一章提取带证据的人物性格与能力。作者核对后，人物档案用于后续创作。</p></div><div class="step-count">02 <span>/ 04</span></div></div>
+          <div class="card skill-card"><div class="card-header"><div><span class="eyebrow">SKILL TREE</span><h3>重要角色技能树</h3></div><span class="quiet">等级 1—5 · 以原文证据为准</span></div><p class="hint">提取章节记忆后，点击“从本章记忆更新人物”，勾选并确认变化即可更新技能树。也可在这里手动调整；手动修改后点击“保存设定”。</p><div id="skill-tree" class="skill-tree"></div></div>
+          <div class="card skill-card"><div class="card-header"><div><span class="eyebrow">CHARACTER HISTORY</span><h3>人物成长记录</h3></div><button class="button small subtle" id="go-memories">查看章节记忆 →</button></div><p class="hint">每章确认的人物选择、性格表现、关系与目标变化都记录在这里。原始性格设定保留，成长记录会参与后续创作。</p><div id="character-history"></div></div>
+          <div class="two-col balanced">
+            <div class="card"><div class="card-header"><div><span class="eyebrow">CHARACTER BIBLE</span><h3>人物档案</h3></div><span class="quiet">可编辑 JSON</span></div><p class="hint">保留原文证据。AI 的推测放进 uncertain；改完点击“保存设定”。</p><textarea id="bible" class="deep-textarea code-textarea" placeholder="分析第一章后，人物档案会显示在这里。"></textarea></div>
+            <div class="card"><div class="card-header"><div><span class="eyebrow">CHARACTER ARC</span><h3>人物发展路线</h3></div><button id="plan" class="button small primary">用 Pro 推演</button></div><p class="hint">根据世界观、人物档案和相关章节记忆，推演冲突、关系变化和关键抉择。</p><textarea id="arc-plan" class="deep-textarea" placeholder="推演结果会显示在这里。可以直接修改，作为后续写作约束。"></textarea><div class="callout"><strong>模型分工</strong><span>人物提取、章节记忆和普通草稿用 Flash；复杂弧线用 Pro。重点场景可主动选 Pro。</span></div></div>
+          </div>
+        </section>
+
+        <section id="memories" class="tab-panel" role="tabpanel">
+          <div class="page-intro"><div><span class="eyebrow">04 / CHAPTER MEMORY</span><h2>把几百章的故事串起来</h2><p>按章查看事件、人物变化与伏笔。这里汇总已保存的记忆，浏览、搜索和导出不消耗 token。</p></div></div>
+          <div class="card">
+            <div class="card-header"><h3>全书章节记忆</h3><button id="export-memories" class="button small subtle">导出记忆 Markdown ↓</button></div>
+            <p id="memory-stats" class="hint" aria-live="polite"></p>
+            <div class="memory-filters"><input id="memory-search" type="search" placeholder="搜索章号、标题、人物名、事件或伏笔" aria-label="搜索章节记忆"><select id="memory-filter" aria-label="筛选记忆状态"><option value="all">全部章节</option><option value="current">记忆有效</option><option value="missing">尚未提取</option><option value="stale">正文已修改</option><option value="unknown">旧版待核对</option><option value="unsynced">人物待更新</option></select></div>
+            <div id="memory-list"></div>
+            <div class="memory-pagination"><button id="memory-prev" class="button small subtle">上一页</button><span id="memory-page" class="hint"></span><button id="memory-next" class="button small subtle">下一页</button></div>
+          </div>
+        </section>
+
+        <section id="chapters" class="tab-panel" role="tabpanel">
+          <div class="page-intro"><div><span class="eyebrow">03 / CHAPTERS</span><h2>按章节写长篇</h2><p>一章可以写几万字。AI 生成遵守世界观、人物档案和相关章节记忆。</p></div><div class="step-count">03 <span>/ 04</span></div></div>
+          <div class="chapter-grid">
+            <div class="stack">
+              <div class="card"><div class="card-header"><div><span class="eyebrow">SCENE BRIEF</span><h3>本次章节 / 场景要求</h3></div></div><p class="hint">在这里粗略写下接下来这一章要发生的事、出场人物、事件顺序或视角。这些要求会发送给 AI，直接指导本次生成；填写内容可随设定保存。</p><textarea id="scene" maxlength="2500" class="medium-textarea" placeholder="例如：男女主角第一次正式约会，在雨停后的旧书店。她试探他是否知道那封信的事；他想坦白，又怕毁掉刚建立的信任。第三人称限知视角。"></textarea><div class="generate-row"><label class="model-choice"><span>生成模型</span><select id="draft-model"><option value="draft">Flash · 日常场景</option><option value="draft_pro">Pro · 重点场景</option></select></label><button id="draft" class="button primary">生成场景草稿 <span>↗</span></button></div><p class="hint">单次生成，无自动续写；草稿会留在下方供你修改。</p></div>
+              <div class="card"><div class="card-header"><div><span class="eyebrow">AI DRAFT</span><h3>待审草稿</h3></div><span class="quiet" id="draft-count">0 字</span></div><textarea id="draft-output" class="draft-textarea" placeholder="生成的场景草稿会出现在这里。先修改，再插入章节编辑器。"></textarea><div class="right-align"><button id="insert-draft" class="button subtle">插入章节编辑器 →</button></div></div>
+            </div>
+            <div class="stack">
+              <div class="card"><div class="card-header"><div><span class="eyebrow">CHAPTER LIST</span><h3>章节目录</h3></div><button id="add-chapter" class="button small subtle">＋ 新建章节</button></div><p id="novel-stats" class="hint"></p><input id="chapter-search" type="search" placeholder="按章号或标题查找（几百章也可快速定位）" aria-label="查找章节"><div id="chapter-list" class="chapter-list"></div><p id="chapter-list-note" class="hint"></p></div>
+              <div class="card"><div class="card-header"><div><span class="eyebrow">MANUSCRIPT</span><h3>章节正文</h3></div><button id="save-chapter" class="button small subtle">保存章节</button></div><div class="chapter-fields"><label>章号<input id="chapter-number" type="number" min="1" max="10000"></label><label>章节标题<input id="chapter-title" maxlength="150" placeholder="例如：雨后旧书店"></label></div><textarea id="chapter-body" class="chapter-textarea" placeholder="在这里写第一章或当前章节。正文只存这一份；AI 不会自动覆盖。"></textarea><div class="chapter-footer"><span class="quiet" id="chapter-count">0 字</span><div class="chapter-nav"><button id="prev-chapter" class="button small subtle">上一章</button><button id="next-chapter" class="button small subtle">下一章</button></div></div><div class="summary-actions"><div><strong>本章事实记录</strong><p class="hint">点击后由 Flash 从整章正文提取事件、人物和能力变化；长章会分段读取，不会只取开头。</p></div><button id="summarize" class="button small primary">从整章正文提取记忆</button></div><p id="summary-status" class="hint"></p><label class="summary-label">章节记忆 <span>AI 提取后可校正错漏，再保存</span><textarea id="chapter-summary" class="summary-textarea" placeholder="保存正文后，点击“从整章正文提取记忆”。"></textarea></label><div class="memory-links"><button id="update-characters" class="button small primary">从本章记忆更新人物</button><button id="view-memories" class="button small subtle">查看全书章节记忆 →</button></div><p id="character-sync-status" class="hint"></p><button id="delete-chapter" class="button small danger">删除当前章节</button></div>
+            </div>
+          </div>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <dialog id="create-dialog"><form method="dialog" id="create-form"><button type="button" id="close-dialog" class="dialog-close" aria-label="关闭">×</button><span class="eyebrow">NEW NOVEL</span><h2>新建小说</h2><label>标题<input id="new-title" required maxlength="150" placeholder="给你的故事一个名字"></label><label>一句话设想<textarea id="new-premise" rows="3" maxlength="3000" placeholder="可稍后填写"></textarea></label><button class="button primary" type="submit">创建小说</button></form></dialog>
+  <dialog id="usage-dialog"><div class="usage-modal"><button type="button" id="close-usage" class="dialog-close" aria-label="关闭">×</button><span class="eyebrow">TOKEN LEDGER</span><h2>调用记录与成本</h2><p class="hint">按官方峰时单价估算，真实账单和缓存命中以 DeepSeek 控制台为准。无用量回执的中断按预留上限占用本地预算。</p><div id="usage-list"></div><div id="recovery-box" hidden><h3>已生成内容</h3><p class="hint">即使调用中断，已收到的正文也会保存在这里。</p><textarea id="recovery-text" readonly></textarea><button id="copy-recovery" class="button small subtle">复制内容</button></div></div></dialog>
+  <dialog id="key-dialog"><form id="key-form"><button type="button" id="close-key" class="dialog-close" aria-label="关闭">×</button><span class="eyebrow">DEEPSEEK CONNECTION</span><h2>连接 DeepSeek</h2><p class="hint">Key 只保存在本机的 .env 文件，不会显示在页面或导出的小说备份中。留空保存可移除已有 Key。</p><label>API Key<input id="api-key" type="password" autocomplete="off" maxlength="300" placeholder="粘贴你的 DeepSeek API Key"></label><button class="button primary" type="submit">保存连接</button></form></dialog>
+  <dialog id="character-review-dialog"><div class="usage-modal"><button id="close-character-review" class="dialog-close" aria-label="关闭">×</button><span class="eyebrow">REVIEW CHARACTER CHANGES</span><h2>核对本章人物变化</h2><p id="character-review-source" class="hint"></p><p class="hint">勾选确认的人物后写入档案。已有性格、欲望等基础设定保留，变化追加到成长记录；技能树按所示等级更新。补录旧章不会回退新章已记录的技能。</p><div id="character-review-list"></div><div class="right-align"><button id="apply-character-updates" class="button primary">确认写入人物档案</button></div></div></dialog>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+</body>
+</html>

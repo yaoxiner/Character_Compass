@@ -1,0 +1,33 @@
+{
+  "tool": "OpenAI built-in imagegen",
+  "asset": "web/assets/companion-drag-anime-v3.png",
+  "transparent_background": true,
+  "prompt": "Use case: identity-preserve. Asset type: one eight-frame animated sprite sheet for an ORIGINAL desktop pet.\nInputs: Image 1 is the original blue-haired desktop girl and is the EDIT TARGET and sole character identity/costume reference. It has the preferred wide open blue eyes and surprised face. Image 2 is a temporary contact sheet of actual Lucky Star anime frames and is ONLY a movement study: arms thrown up above the head then swung ALL THE WAY down to the sides, torso counter-movement, quick spacing. Image 3 is a temporary contact sheet of Aqua panicking in the air and is ONLY a movement study of bodily loss of balance, asymmetry, and delayed hair movement. Do NOT reproduce either reference anime character, clothing or background. Redraw ONLY the original girl from Image 1.\n\nMake EXACTLY eight sequential FULL-BODY frames on a FOUR-COLUMN TWO-ROW regular invisible grid, landscape canvas aspect 4:3 (target 1448x1086), equal portrait cells aspect 2:3. Every cell must have clear transparent padding on all four sides; especially leave generous EMPTY TRANSPARENT GUTTERS between characters. Each full girl, both arms, all fingers, both legs, both shoes and all hair must remain INSIDE her own cell, with no contact with any neighbor. No border, grid line, text or number. Actual alpha transparency, no background, shadow, colored glow, ghost figure or checkerboard.\n\nAction: very readable, exaggerated 2D ANIME COMEDY PANICKING WHILE BEING LIFTED OFF THE GROUND. She is trying uselessly to escape the grab. The user rejected a previous version because the hands only made tiny movements IN FRONT OF THE CHEST. So give genuinely LARGE ARCS: hands go well ABOVE THE HEAD and then down OUTSIDE THE HIPS. Both arms are loose and flail, slightly out of sync; never keep them folded, clasped, or hovering near the chest. Legs kick in the air in opposite directions, one knee high and one foot extended, then swap. This is NOT marching, dancing, cycling politely, a greeting, or a sad sob. Preserve the original delighted-looking eye design but the expression is shocked and flustered: large open blue eyes, raised eyebrows, open wailing mouth, maybe one attached sweat bead. NOT squeezed > < eyes, not a smile.\n\nAnimation breakdown: frame 1 BOTH ARMS THROWN HIGH in a wide V, left knee tucked up and right foot kicked lower; 2 arms sweeping outward through shoulder height, knees crossing mid-kick; 3 arms reach down beside the hips, right knee tucked and left leg kicked forward, torso leans 7 degrees opposite the swing; 4 arms travel upward outside the body, legs pass halfway; 5 hands high in the V again but opposite arm leads, legs in the opposite kick from frame 1, torso counter-leans 7 degrees; 6 hands sweep down outside shoulders, legs cross; 7 hands down near outer hips with opposite kick, hair swings behind the torso; 8 hands move halfway back up in broad outward arcs, body returns toward frame 1. Include all intermediate arm positions, do not repeat one stock pose. The eight frames make TWO frantic arm-flaps with a complete left/right leg cycle. Clear silhouettes and substantial limb travel are essential. Keep body scale consistent and center of the torso near the same anchor, but allow the head and shoulders to counter-tilt expressively. Do NOT rigidly freeze the head and chest. Hair and cardigan hems follow one frame behind, gently squash/stretch the torso 3-5%. Strong key poses with coherent in-betweens, not random independent illustrations. No detached motion marks, duplicate limbs or blur; exactly two arms and two legs per frame.\n\nCostume/identity invariants: same blue/cyan long wavy hair, whale-shaped hair accessory, cream cardigan, navy dress and ribbons, white socks and navy shoes. No book, no hand picking her up, no second person. Keep skirt modestly covering the body, eye-level camera, both shoes visible at all times.",
+  "identity_reference": "web/assets/companion-panic-a.png",
+  "motion_references": [
+    {
+      "title": "Lucky Star Misao Kusakabe",
+      "url": "https://tenor.com/view/lucky-star-misao-kusakabe-annoyed-prince-gif-27187406",
+      "observed_frames": 7,
+      "frame_duration_ms": 60
+    },
+    {
+      "title": "Aqua Konosuba Panic",
+      "url": "https://tenor.com/view/aqua-konosuba-panic-spin-scream-gif-25524282",
+      "observed_frames": 31,
+      "frame_duration_ms": 100
+    }
+  ],
+  "playback_order": [
+    0,
+    1,
+    2,
+    1,
+    3,
+    4,
+    5,
+    6,
+    7
+  ],
+  "frame_duration_ms": 80
+}

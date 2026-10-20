@@ -1,0 +1,16 @@
+__pycache__/
+*.pyc
+.env
+.env.*
+!.env.example
+data/
+.venv/
+build/
+dist/
+*.spec
+web/assets/icon.ico
+web/assets/icon.png
+*.log
+*.dmp
+windows-build.iss
+

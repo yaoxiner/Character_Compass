@@ -1,0 +1,47 @@
+{
+  "tool": "OpenAI built-in imagegen",
+  "transparent_background": true,
+  "common": "Use case: identity-preserve. Asset type: a single production sprite-sheet PNG for a small desktop pet.\nEdit the referenced original blue-haired chibi girl into exactly EIGHT consecutive animation frames, laid out on a perfectly regular FOUR COLUMN by TWO ROW grid, read left to right, top row then bottom row. Target canvas 2048x1536: each invisible cell 512x768. The sheet is one asset. Real transparent alpha background, not a drawn checkerboard, no blue glow/backdrop, no contact shadows, no grid lines, no labels, no numbers, no text, no props outside the cell. Exactly one whole character in each of the eight cells. Each character occupies the central 76% of cell width and 84% of cell height, with generous identical clear margins, especially above hair and below shoes. All hair, fingers, legs and shoes fully inside its cell. Never overlap adjacent cells.\nPreserve the same character identity, blue/cyan long wavy hair, whale-shaped hair accessory, cream cardigan, navy dress, ribbons, white socks, navy shoes, original chibi proportions and illustration style. Keep character scale, camera, face shape, head anchor, torso length and foot baseline consistent across frames. Only change the small amounts necessary for the action. Adjacent poses must differ by SMALL incremental movements, like a real hand-drawn animation with in-betweens, not eight unrelated extreme poses. Do not simply copy the same pose eight times. No smeared motion blur or duplicate ghost limbs. A crisp readable sprite silhouette is more important than tiny detail. Both legs and both arms must be anatomically coherent in every frame.",
+  "jobs": [
+    {
+      "key": "drag",
+      "refs": [
+        "companion-panic-a.png",
+        "companion-panic-b.png"
+      ],
+      "action": "Image 1 and Image 2 are edit targets and endpoints for the same hanging, mildly panicked flailing action. Make one smooth looping eight-frame cycle: 1 left arm slightly raised and right arm lower, knees gently bent; 2 arms and legs start moving toward neutral; 3 pass through neutral with both hands near shoulder height and feet closer together; 4 right arm gently rises while left lowers and opposite knee starts lifting; 5 reversed limb positions, restrained readable flail; 6 return toward neutral; 7 pass neutral; 8 approach frame 1 so frame 8 to frame 1 is also smooth. Keep head and torso almost still and expression consistent; limbs travel small arcs, hair tips follow softly. No large jumps, spins or changes in body scale. These are coherent in-between poses, not strong alternating kicks. No book during dragging."
+    },
+    {
+      "key": "wave",
+      "refs": [
+        "companion-wave.png",
+        "companion.png"
+      ],
+      "action": "Image 1 is the waving pose edit target; Image 2 is the idle pose identity and resting-pose reference. Make one eight-frame gentle greeting: 1 nearly idle, one hand holds the same book; 2 free hand lifts slightly; 3 free hand halfway up; 4 open palm reaches beside cheek; 5 wrist gently tilts one way; 6 wrist tilts back in a small arc; 7 hand lowers halfway; 8 free hand settles toward idle. Keep the book and non-waving arm stable, feet planted, head still, only a mild friendly smile. Avoid switching the whole body back and forth. All poses must have the same silhouette scale and head anchor."
+    },
+    {
+      "key": "cheer",
+      "refs": [
+        "companion-cheer.png",
+        "companion.png"
+      ],
+      "action": "Image 1 is the cheer pose edit target; Image 2 is the idle identity and resting-pose reference. Make one eight-frame restrained happy celebration: 1 idle with both feet down; 2 slight knee bend anticipation; 3 hands start rising; 4 hands reach shoulder height and knees begin straightening; 5 gentle raised-arm happy apex with feet very slightly lifted; 6 begin lowering hands and feet; 7 knees absorb a soft landing; 8 settle into resting stance. One little celebration only, not repeated teleporting between high jump and idle. Only a tiny vertical movement, consistent head/torso size and same cell placement, shoes visible in all frames. A small smile gradually becomes joyful and returns. No book, no extra objects."
+    },
+    {
+      "key": "stretch",
+      "refs": [
+        "companion-stretch.png",
+        "companion.png"
+      ],
+      "action": "Image 1 is the stretch pose edit target; Image 2 is the idle identity and resting-pose reference. Make one eight-frame gentle sleepy stretch: 1 restful stance; 2 elbows begin rising; 3 arms halfway up, eyes becoming sleepy; 4 arms nearly extended; 5 comfortable full stretch with a tiny yawn; 6 elbows relax down slightly; 7 hands halfway down; 8 resting stance. Keep feet planted at exactly the same baseline, head and torso centered, no jumping, no abrupt large tilt, no book. Incremental arm movement and eyelids, with natural easing at the apex."
+    },
+    {
+      "key": "recover",
+      "refs": [
+        "companion-dizzy.png",
+        "companion.png"
+      ],
+      "action": "Image 1 is the landing/dizzy pose edit target; Image 2 is the idle identity and resting-pose reference. Make one eight-frame soft landing and recovery after being dragged: 1 feet just touching down, arms out to balance; 2 knees flex gently; 3 slight balanced crouch with woozy eyes; 4 rise halfway and arms lower; 5 sway very slightly left; 6 return to centered, eyes opening; 7 hands relax close to body; 8 settled idle stance. Keep the feet near the same baseline with both shoes completely inside the cell; no large body translation, no floating symbols, no book. Gradually change expression, arms and knees rather than abrupt jumps."
+    }
+  ]
+}

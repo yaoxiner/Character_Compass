@@ -1,0 +1,93 @@
+name: Build Windows desktop app
+on:
+  workflow_dispatch:
+  push:
+    branches: [main, master]
+    tags: ['v*']
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  windows:
+    runs-on: windows-latest
+    timeout-minutes: 30
+    env:
+      QT_API: pyqt6
+      PYTHONUTF8: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          architecture: x64
+      - name: Install build dependencies
+        run: python -m pip install -r requirements-desktop.txt pyinstaller pillow
+      - name: Run all tests with Qt installed
+        run: python -m unittest discover -s tests -v
+      - name: Make Windows icon
+        run: python tools/make_icon.py
+      - name: Build application
+        run: pyinstaller --noconfirm --clean --windowed --onedir --name CharacterCompass --icon web/assets/icon.ico --add-data "web:web" desktop.py
+      - name: Verify packaged runtime
+        shell: pwsh
+        run: |
+          $app = Start-Process dist/CharacterCompass/CharacterCompass.exe -ArgumentList '--check-package' -PassThru
+          if (!$app.WaitForExit(60000)) { $app.Kill($true); throw 'Runtime check timed out.' }
+          if ($app.ExitCode -ne 0) { throw 'Packaged runtime check failed.' }
+          python -m pip freeze > dist/dependency-versions.txt
+      - name: Check real packaged windows and high DPI in a Chinese path
+        shell: pwsh
+        run: ./tools/check_windows_package.ps1 -Executable dist/CharacterCompass/CharacterCompass.exe -Reports "$env:RUNNER_TEMP/windows-checks/portable"
+      - name: Build installer with desktop shortcut
+        shell: pwsh
+        run: |
+          function Find-InnoCompiler {
+            $command = Get-Command ISCC.exe -ErrorAction SilentlyContinue
+            if ($command) { return $command.Source }
+            foreach ($root in @(${env:ProgramFiles(x86)}, $env:ProgramFiles)) {
+              foreach ($folder in (Get-ChildItem $root -Directory -Filter 'Inno Setup *' -ErrorAction SilentlyContinue)) {
+                $candidate = Join-Path $folder.FullName 'ISCC.exe'
+                if (Test-Path $candidate) { return $candidate }
+              }
+            }
+          }
+          $iscc = Find-InnoCompiler
+          if (!$iscc) {
+            choco install innosetup --yes --no-progress
+            if ($LASTEXITCODE -ne 0) { throw 'Inno Setup installation failed.' }
+            $iscc = Find-InnoCompiler
+          }
+          if (!$iscc) { throw 'Inno Setup compiler was not installed.' }
+          $source = [System.IO.File]::ReadAllText((Join-Path $PWD 'packaging/windows.iss'))
+          [System.IO.File]::WriteAllText((Join-Path $PWD 'windows-build.iss'), $source, [System.Text.UTF8Encoding]::new($true))
+          & $iscc windows-build.iss
+          if ($LASTEXITCODE -ne 0) { throw 'Inno Setup build failed.' }
+      - name: Install setup exe and validate installed application and shortcuts
+        shell: pwsh
+        run: ./tools/check_windows_installer.ps1 -Installer dist/installer/CharacterCompass-Setup.exe -Reports "$env:RUNNER_TEMP/windows-checks/installed"
+      - name: Upload runnable folder
+        uses: actions/upload-artifact@v4
+        with:
+          name: CharacterCompass-Windows
+          path: dist/CharacterCompass/
+          if-no-files-found: error
+      - name: Upload verified exe installer
+        uses: actions/upload-artifact@v4
+        with:
+          name: CharacterCompass-Windows-Setup
+          path: dist/installer/CharacterCompass-Setup.exe
+          if-no-files-found: error
+      - name: Upload validation reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: CharacterCompass-Windows-Checks
+          path: |
+            ${{ runner.temp }}/windows-checks/**/*.json
+            ${{ runner.temp }}/windows-checks/**/*.png
+            ${{ runner.temp }}/windows-checks/**/*.log
+            dist/dependency-versions.txt
+            build/CharacterCompass/warn-CharacterCompass.txt
+            build/CharacterCompass/xref-CharacterCompass.html
+            ~/AppData/Roaming/CharacterCompass/logs/*.log
+          if-no-files-found: warn

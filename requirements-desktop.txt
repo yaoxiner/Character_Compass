@@ -1,0 +1,4 @@
+pywebview[qt]==6.2.1
+PyQt6==6.11.0
+PyQt6-WebEngine==6.11.0
+QtPy==2.4.3
