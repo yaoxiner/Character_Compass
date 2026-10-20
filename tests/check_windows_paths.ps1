@@ -34,16 +34,21 @@ public static class ShortcutPathTestNative {
     if (![string]::Equals($expected, $resolvedShort, [StringComparison]::OrdinalIgnoreCase)) {
         throw 'Short and long executable paths did not resolve to the same file.'
     }
-    $shell = New-Object -ComObject WScript.Shell
-    $linkPath = Join-Path $root 'Character Compass.lnk'
-    $link = $shell.CreateShortcut($linkPath)
-    $link.TargetPath = $short.ToString()
-    $link.Save()
-    $actual = Resolve-WindowsFilePath ($shell.CreateShortcut($linkPath).TargetPath)
-    if (![string]::Equals($expected, $actual, [StringComparison]::OrdinalIgnoreCase)) {
-        throw 'Actual shell shortcut did not resolve to the expected executable.'
+    foreach ($target in @($app, $short.ToString())) {
+        $linkPath = Join-Path $root '中文 快捷方式.lnk'
+        Write-WindowsShortcut -Path $linkPath -Target $target
+        if (!(Test-Path -LiteralPath $linkPath)) { throw 'Unicode shortcut file was not created.' }
+        $actual = Resolve-WindowsFilePath (Read-WindowsShortcutTarget $linkPath)
+        if (![string]::Equals($expected, $actual, [StringComparison]::OrdinalIgnoreCase)) {
+            throw 'Unicode shell shortcut did not resolve to the expected executable.'
+        }
     }
-    Write-Host 'PASS: Unicode, spaces, slash/case/dot aliases, short paths, and a real .lnk; different executables rejected.'
+    Write-WindowsShortcut -Path $linkPath -Target $other
+    $wrong = Resolve-WindowsFilePath (Read-WindowsShortcutTarget $linkPath)
+    if ([string]::Equals($expected, $wrong, [StringComparison]::OrdinalIgnoreCase)) {
+        throw 'Shortcut to a different executable was incorrectly accepted.'
+    }
+    Write-Host 'PASS: Unicode shortcut filenames and targets, spaces, slash/case/dot aliases and short paths; different shortcut targets rejected.'
 } finally {
     Remove-Item -LiteralPath $root -Recurse -Force
 }

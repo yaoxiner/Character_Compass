@@ -29,6 +29,8 @@ Windows 构建生成 `CharacterCompass-Setup.exe`，内含 Python、Qt WebEngine
 
 快捷方式通过 Windows 文件句柄解析最终目标后比对，兼容中文、空格、8.3 短路径和目录联接；真正指向其它文件仍会失败。`installed/installer.json` 在比对失败时也保存实际目标、预期目标及规范路径，供定位问题。所有报告先集中到仓库内的 `dist/windows-checks/`，再从这一个目录上传，避免临时目录、用户目录与仓库目录混用导致上传失败；安装目录内的 Qt 素材不会作为验收报告收集。
 
+快捷方式验收使用 Windows 原生的 [`IShellLinkW`](https://learn.microsoft.com/en-us/windows/win32/api/shobjidl_core/nf-shobjidl_core-ishelllinkw-getpath) 与 `IPersistFile` Unicode 接口读取和保存 `.lnk`，避免 `WScript.Shell` 在英文系统代码页下把中文路径转换成问号。回归测试同时覆盖中文快捷方式文件名、中文目标目录、长短路径和错误目标。
+
 ## 本次上传前的验证范围
 
 2026-10-20：本机为 Linux，没有 Windows、Wine 或 Windows 虚拟机。本机已验证单元测试、源码启动与打包后的 Qt 写作窗口和桌宠验收入口；**这不代表 Windows 实机验收已通过**。Windows exe 的实际构建、运行、安装和卸载结果，以第一次 Windows Actions 运行报告为准。

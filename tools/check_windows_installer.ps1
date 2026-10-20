@@ -15,7 +15,6 @@ if (!$process.WaitForExit(180000)) { $process.Kill($true); throw 'Installer time
 if ($process.ExitCode -ne 0) { throw "Installer failed: $($process.ExitCode)" }
 $app = Join-Path $installPath 'CharacterCompass.exe'
 if (!(Test-Path $app)) { throw 'Installed executable is missing.' }
-$shell = New-Object -ComObject WScript.Shell
 . "$PSScriptRoot/windows_paths.ps1"
 $resolvedApp = Resolve-WindowsFilePath $app
 $shortcutPaths = @(
@@ -28,9 +27,8 @@ foreach ($path in $shortcutPaths) {
     $detail = [ordered]@{shortcut=$path; expected=$app; expectedResolved=$resolvedApp; target=$null; targetResolved=$null; ok=$false; error=$null}
     try {
         if (!(Test-Path -LiteralPath $path)) { throw "Shortcut missing: $path" }
-        $shortcut = $shell.CreateShortcut($path)
-        $detail.target = $shortcut.TargetPath
-        $detail.targetResolved = Resolve-WindowsFilePath $shortcut.TargetPath
+        $detail.target = Read-WindowsShortcutTarget $path
+        $detail.targetResolved = Resolve-WindowsFilePath $detail.target
         $detail.ok = [string]::Equals($detail.targetResolved, $resolvedApp, [StringComparison]::OrdinalIgnoreCase)
         if (!$detail.ok) { throw "Shortcut target mismatch: actual='$($detail.target)' expected='$app'" }
     } catch {
