@@ -16,17 +16,32 @@ if ($process.ExitCode -ne 0) { throw "Installer failed: $($process.ExitCode)" }
 $app = Join-Path $installPath 'CharacterCompass.exe'
 if (!(Test-Path $app)) { throw 'Installed executable is missing.' }
 $shell = New-Object -ComObject WScript.Shell
+. "$PSScriptRoot/windows_paths.ps1"
+$resolvedApp = Resolve-WindowsFilePath $app
 $shortcutPaths = @(
     (Join-Path ([Environment]::GetFolderPath('DesktopDirectory')) 'Character Compass.lnk'),
     (Join-Path ([Environment]::GetFolderPath('Programs')) 'Character Compass.lnk')
 )
+$shortcutDetails = @()
+$shortcutErrors = @()
 foreach ($path in $shortcutPaths) {
-    if (!(Test-Path $path)) { throw "Shortcut missing: $path" }
-    $shortcut = $shell.CreateShortcut($path)
-    if ($shortcut.TargetPath -ine $app) { throw "Shortcut points to the wrong executable: $path" }
+    $detail = [ordered]@{shortcut=$path; expected=$app; expectedResolved=$resolvedApp; target=$null; targetResolved=$null; ok=$false; error=$null}
+    try {
+        if (!(Test-Path -LiteralPath $path)) { throw "Shortcut missing: $path" }
+        $shortcut = $shell.CreateShortcut($path)
+        $detail.target = $shortcut.TargetPath
+        $detail.targetResolved = Resolve-WindowsFilePath $shortcut.TargetPath
+        $detail.ok = [string]::Equals($detail.targetResolved, $resolvedApp, [StringComparison]::OrdinalIgnoreCase)
+        if (!$detail.ok) { throw "Shortcut target mismatch: actual='$($detail.target)' expected='$app'" }
+    } catch {
+        $detail.error = $_.Exception.Message
+        $shortcutErrors += $detail.error
+    }
+    $shortcutDetails += $detail
 }
-$shortcutReport = @{ok=$true; executable=$app; shortcuts=$shortcutPaths}
+$shortcutReport = @{ok=($shortcutErrors.Count -eq 0); executable=$app; shortcuts=$shortcutDetails}
 $shortcutReport | ConvertTo-Json -Depth 4 | Set-Content (Join-Path $reportsPath 'installer.json') -Encoding utf8
+if ($shortcutErrors.Count) { throw ($shortcutErrors -join '; ') }
 & "$PSScriptRoot/check_windows_package.ps1" -Executable $app -Reports (Join-Path $reportsPath 'app') -SkipPathCopy
 if (!$?) { throw 'Installed application validation failed.' }
 
